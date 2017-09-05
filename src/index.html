@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        canvas{
+            border: 2px solid #ccc;
+        }
+        #button{
+            font-size: 30px;
+            color: #fff;
+            background: #999;
+            padding: 10px 20px;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas" width="700" height="800"></canvas>
+<span id="button">生成</span>
+<img id="image" src="">
+</body>
+<script>
+    var obj = {
+        initDraw:function () {
+            let that = this;
+            let canvas = document.getElementById('canvas');
+            let ctx = canvas.getContext("2d");
+
+            let width = canvas.width;
+            let height = canvas.height;
+            let offTop = 0;
+            let mouseX = 0;
+            let mouseY = 0;
+            let mouseD = false;
+            let xLast = 0;
+            let yLast = 0;
+            ctx.fillStyle = '#000';
+            //画笔大小
+            ctx.lineWidth = 10;
+            ctx.lineCap = 'round';
+            canvas.addEventListener('touchmove', function(evt) {
+                that.isTakeIn = true;
+                let touch = evt.touches[0];
+                mouseX = touch.pageX - 0;
+                mouseY = touch.pageY - offTop;
+                if (mouseY < height && mouseX < width) {
+                    evt.preventDefault();
+                    if (mouseD) {
+                        drawing(mouseX, mouseY);
+                    }
+                }
+            }, false);
+            canvas.addEventListener('touchstart', function(evt) {
+                let touch = evt.touches[0];
+                mouseD = true;
+                mouseX = touch.pageX - 0;
+                mouseY = touch.pageY - offTop;
+                xLast = mouseX;
+                yLast = mouseY;
+                drawing(mouseX + 1, mouseY + 1);
+            }, false);
+            canvas.addEventListener('touchend', function(evt) {
+                mouseD = false;
+            }, false);
+            function drawing(x,y){
+                ctx.beginPath();
+                ctx.moveTo(xLast, yLast);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                xLast = x;
+                yLast = y;
+            }
+            this.clickBind();
+        },
+        clickBind:function () {
+            var that = this;
+            var button = document.getElementById('button');
+            button.addEventListener('click', function(evt) {
+                that.canvasFormatImg();
+            }, false);
+        },
+        canvasFormatImg:function () {
+            var canvas = document.getElementById('canvas');
+            var url = canvas.toDataURL();
+            document.getElementById('image').src = url;
+        }
+    }
+    obj.initDraw()
+</script>
+</html>
